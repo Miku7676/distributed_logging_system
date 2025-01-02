@@ -1,0 +1,23 @@
+networks:
+  microservice-1:
+    driver: bridge
+  distributed_logging_system_dls-service:
+    external: True
+services:
+  ms1:
+    build: .
+    container_name: ms1
+    command: python service.py
+    networks:
+      - microservice-1
+    environment:
+      - FD_HOST=ftd1
+  
+  ftd1:
+    build: ./fluentd
+    container_name: ftd1
+    networks:
+      - microservice-1
+      - distributed_logging_system_dls-service
+    volumes:
+      - ./fluentd:/fluentd/etc
